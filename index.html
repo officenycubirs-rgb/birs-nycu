@@ -370,7 +370,7 @@ var EN={
 '超音波教學室':'Ultrasound Teaching Room','圖書室':'Library','學生活動室':'Student Activity Room','分子生物研究室':'Molecular Biology Lab','放射藥物品管室':'Radiopharmaceutical QC Room','放射化學實驗室':'Radiochemistry Lab',
 '醫放系辦':'Department Office','影印室':'Copy Room','系主任會客室':'Chair\'s Reception Room','多功能室':'Multipurpose Room','推廣教育辦公室':'Continuing Education Office','儀器中心':'Instrument Center',
 '廁所':'Restroom','男廁':'Men\'s Restroom','女廁':'Women\'s Restroom','機房':'Equipment Room','樓梯':'Stairs','樓梯口':'Stairwell','電梯':'Elevator','天井':'Atrium','空調機房':'HVAC Room','共用儀器室':'Shared Instrument Room',
-'4樓前側・非本系空間':'4F front · Non-dept.'
+'4樓前側・非本系空間':'4F front · Non-dept.','2樓前側・非本系空間':'2F front · Non-dept.','2樓前側':'2F front'
 };
 var TEACH_EN={}; /* 教師英文姓名：{'吳杰':'Chieh Wu'}；未填則顯示「Prof. 中文姓名」 */
 var TKIND={'辦公室':'Office','研究室':'Research Room','研究生室':'Graduate Student Room','實驗室':'Lab'};
@@ -444,8 +444,17 @@ var R1=[['131-1','PET/CT控制室',621,742,110,275,RAD],['132','PET/CT造影室'
  ['103','放射性食品檢驗分析實驗室',232,428,561,725],['112','吳東信老師研究室',108,267,772,899],['113','吳杰老師研究室',267,427,772,899]]
  .map(function(a){return dp1(a[2],a[3],a[4],a[5],a[0],a[1],a[6]);});
 
-var R2=row(119,124,101,[['245-1','多功能會議室',88,BK],['245-2','系學會室',88],['246','莊惠燕老師辦公室',87],['247','莊惠燕老師研究生室',88],['248-1','莊惠燕老師實驗室',87],['248-2','P1細胞培養室',87],['248-3','共用冰箱室',87],['249','放射藥物實驗室',126,RAD]])
- .concat(row(119,265,114,[['234-1/234-2','超音波教學室',175],['235','圖書室',88],['236','學生活動室',88],['237-1','分子生物研究室',87],['237','放射藥物品管室',155,RAD],['238','放射化學實驗室',145,RAD]]));
+/* 生醫工程館 2F：座標取自使用者提供的 2F 平面圖（圖面 px → 單位：x=2+(px-20)*K2，y=30.6+(py-50)*K2） */
+var K2=.5663;
+/* 天井以下的前側部分縱向拉長，讓前側延伸到與 4F 相同的底板邊緣，減少空白 */
+function Y2(py){var yb=30.6+(594-50)*K2;return py<=594?30.6+(py-50)*K2:yb+(py-594)*((631-yb)/(831-594));}
+var KX2=(1048-89.7)/(1867-20); /* 左側讓出天橋走廊（x 0～85，與 4F 相同），橫向比例隨之微縮 */
+function q2(x0,x1,y0,y1){return {x:89.7+(x0-20)*KX2,y:Y2(y0),w:(x1-x0)*KX2,d:Y2(y1)-Y2(y0)};}
+function dp2(x0,x1,y0,y1,id,name,o){o=o||{};var g=q2(x0,x1,y0,y1);g.id=id;g.name=name;g.rad=!!o.rad;g.book=!!o.book;return g;}
+function pl2(x0,x1,y0,y1,id,name){var g=q2(x0,x1,y0,y1);g.id=id;g.name=name||'';g.cat='nd';return g;}
+var R2=[['245-1','多功能會議室',656,798,50,218,BK],['245-2','系學會室',798,942,50,218],['246','莊惠燕老師辦公室',942,1086,50,218],['247','莊惠燕老師研究生室',1086,1230,50,218],['248-1','莊惠燕老師實驗室',1230,1373,50,218],['248-2','P1細胞培養室',1373,1517,50,218],['248-3','共用冰箱室',1517,1661,50,218],['249','放射藥物實驗室',1661,1867,50,218,RAD],
+ ['234-1/234-2','超音波教學室',655,942,284,451],['235','圖書室',942,1086,284,451],['236','學生活動室',1086,1230,284,451],['237-1','分子生物研究室',1230,1373,284,451],['237','放射藥物品管室',1373,1628,284,451,RAD],['238','放射化學實驗室',1628,1867,284,594,RAD]]
+ .map(function(a){return dp2(a[2],a[3],a[4],a[5],a[0],a[1],a[6]);});
 
 /* 生醫工程館 4F：座標取自使用者提供的 4F 平面圖（圖面 px → 單位：x=(px-258)*.76，y=30.6+(py-140)*.76）；後側在上，前側（灰底）在下 */
 var S4=.76;
@@ -464,7 +473,11 @@ var F4=[pl(547,659,140,320,'廁所','廁所'),pl(376,540,374,590,'樓梯口','�
 var HERE={x:(677-258)*S4,y:30.6+(706-140)*S4}; /* 導覽觸控螢幕放置位置（平面圖「現在位置」） */
 function blocks(x,y,w,d,n,ids){var o=[],bw=w/n;for(var k=0;k<n;k++)o.push({id:ids?ids[k]:'',name:'',x:x+k*bw,y:y,w:bw,d:d,cat:'nd'});return o;}
 var F1=[pl1(428,533,110,275,'男廁','男廁'),pl1(553,620,110,275,'女廁','女廁'),pl1(428,508,275,350,'機房','機房'),pl1(428,508,350,561,'樓梯','樓梯'),pl1(428,508,561,725,'電梯1F-A','電梯'),pl1(427,507,772,899,'電梯1F-B','電梯')];
-var F2=blocks(224.5,335,819,100,10).concat(blocks(224.5,480,819,100,11));
+/* 2F 非本系空間、廁所、樓梯口、電梯、天井與前側（取自使用者提供的 2F 平面圖） */
+var F2=[pl2(20,197,50,218,'',''),pl2(198,310,40,220,'廁所-2F','廁所'),pl2(310,407,50,218,'',''),pl2(407,508,50,218,'',''),pl2(508,656,50,218,'',''),
+ pl2(307,485,284,451,'',''),pl2(485,655,284,451,'',''),pl2(307,1628,451,594,'天井-2F','天井'),
+ pl2(307,1867,595,693,'前側2F-A','2樓前側・非本系空間'),pl2(307,1867,729,826,'前側2F-B','2樓前側・非本系空間'),
+ pl2(26,190,274,490,'樓梯口-2F','樓梯口'),pl2(26,190,491,567,'電梯2F-A','電梯'),pl2(26,190,621,696,'電梯2F-B','電梯'),pl2(26,197,733,831,'前側2F-C','2樓前側')];
 var COR3={x:984.8,y:30.6,w:85.2,d:495*1.15}; /* 與 4F 天橋走廊同寬（85.2） */
 var FL3=[]; /* 實驗大樓 3F：平面圖 px → 單位 x=12+(px-12)*.497，y=12+(py-36)*.497 */
 var LBY=((612-36)*.497)*1.15+30.6; /* 天橋在實驗大樓 3F 的中心 y */
@@ -477,7 +490,7 @@ var L3=row(12,12,110,[['B302','多功能室',bw,BK],['B304','吳杰老師辦公�
 /* 實驗大樓 3F 房間依平面圖比例放大 1.15 倍，使佔地與生醫工程館相同 */
 L3.forEach(function(r){r.x=(r.x-12)*1.15+34.9;r.y=(r.y-12)*1.15+30.6;r.w*=1.15;r.d*=1.15;});
 var BLD={R:{name:'生醫工程館',W:1070,D:655},L:{name:'實驗大樓',W:1070,D:655}};
-var FL={R1:{b:'R',label:'1F',rooms:R1,front:F1,align:'abs'},R2:{b:'R',label:'2F',rooms:R2,front:F2,align:'rt'},R3:{b:'R',label:'3F',rooms:null},R4:{b:'R',label:'4F',rooms:R4,front:F4,align:'abs',cor:COR4},L3:{b:'L',label:'3F',rooms:L3,front:FL3,align:'abs',cor:COR3}};
+var FL={R1:{b:'R',label:'1F',rooms:R1,front:F1,align:'abs'},R2:{b:'R',label:'2F',rooms:R2,front:F2,align:'abs',cor:COR4},R3:{b:'R',label:'3F',rooms:null},R4:{b:'R',label:'4F',rooms:R4,front:F4,align:'abs',cor:COR4},L3:{b:'L',label:'3F',rooms:L3,front:FL3,align:'abs',cor:COR3}};
 var ORDER=['R1','R2','R4','L3'];
 var CATS={teach:'教學空間',lab:'實驗與造影',research:'研究室',office:'教師辦公室',public:'行政與公共',support:'支援空間'};
 var LBL={'138':'鈷60、銫137照射室'};
@@ -606,7 +619,7 @@ function buildOverview(){
   function floorG(fk){
     var f=FL[fk],b=BLD[f.b],z=ZO[fk],o=OO[fk],lock=!f.rooms;
     var g='<g class="ovfloor'+(lock?' lock':'')+'" data-f="'+fk+'" id="of-'+fk+'">'+slabSVG(b,z,o);
-    if(fk==='R4')g+=corSVG(f.cor,z,o);
+    if(fk==='R4'||fk==='R2')g+=corSVG(f.cor,z,o);
     if(f.rooms){depthSort(f.rooms.concat(f.front||[])).forEach(function(r){g+=roomSVG(r,z,5,o,r.cat==='nd'?'nd':'');});}
     if(fk==='L3')g+=corSVG(f.cor,z,o);
     if(fk==='R4')g+=hereSVG(HERE.x,HERE.y,z+5,1/ppu*0.8,fu*0.62,o);
@@ -677,6 +690,7 @@ function buildFloor(){
       +'<text class="brl" font-size="'+fu*0.9+'" x="'+cp[0].toFixed(1)+'" y="'+(cp[1]+fu*0.3).toFixed(1)+'">'+TL('天橋走廊')+'</text>'
       +'<text class="brl" font-size="'+fu*1.05+'" x="'+(west?bp[0]:bq2[0]).toFixed(1)+'" y="'+(west?bp[1]-fu*0.4:bq2[1]+fu*2).toFixed(1)+'">'+TL(west?'‹ 往實驗大樓 3F':'往生醫工程館 4F ›')+'</text></g>';
   }
+  if(st.fk==='R2')s+=corSVG(f.cor,0,O); /* 2F 同樣保留天橋走廊位置（無天橋連接） */
   if(bgrp&&west)s+=bgrp;
   all.forEach(function(r){var nd=r.cat==='nd';s+=roomSVG(r,0,nd?12:(r.id===st.sel?SH:H),O,dimCls(r)+(nd?' nd':''));});
   if(bgrp&&!west)s+=bgrp;
