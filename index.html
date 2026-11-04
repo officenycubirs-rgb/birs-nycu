@@ -622,7 +622,6 @@ function buildOverview(){
     if(fk==='R4'||fk==='R2')g+=corSVG(f.cor,z,o);
     if(f.rooms){depthSort(f.rooms.concat(f.front||[])).forEach(function(r){g+=roomSVG(r,z,5,o,r.cat==='nd'?'nd':'');});}
     if(fk==='L3')g+=corSVG(f.cor,z,o);
-    if(fk==='R4')g+=hereSVG(HERE.x,HERE.y,z+5,1/ppu*0.8,fu*0.62,o);
     var lp=Q(0,b.D,z,o);
     g+='<text class="ovl" font-size="'+fu*1.15+'" x="'+(lp[0]-22).toFixed(1)+'" y="'+(lp[1]+fu*0.2).toFixed(1)+'">'+f.label+'</text>';
     if(lock&&!sm)g+='<text class="ovs" font-size="'+fu*0.62+'" x="'+(lp[0]-22).toFixed(1)+'" y="'+(lp[1]+fu*0.95).toFixed(1)+'">'+TL('非本系空間')+'</text>';
@@ -695,7 +694,6 @@ function buildFloor(){
   all.forEach(function(r){var nd=r.cat==='nd';s+=roomSVG(r,0,nd?12:(r.id===st.sel?SH:H),O,dimCls(r)+(nd?' nd':''));});
   if(bgrp&&!west)s+=bgrp;
   var pin='';
-  if(st.fk==='R4')s+=hereSVG(HERE.x,HERE.y,12,1/ppu,fu*1.1,O);
   all.forEach(function(r){
     var nd=r.cat==='nd',h=nd?12:(r.id===st.sel?SH:H),p=P(r.x+r.w/2,r.y+r.d/2,h);
     var cpl=Math.max(2,Math.min(8,Math.floor((r.w*C30*ppu-2)/15)));
@@ -755,7 +753,7 @@ function markList(){
 function renderLegend(){
   var h='';
   Object.keys(CATS).forEach(function(k){h+='<button type="button" class="chip k-'+k+'" data-cat="'+k+'" aria-pressed="'+(st.cat===k)+'"><i></i>'+TL(CATS[k])+'</button>';});
-  h+='<span class="chip static"><i class="ndsw"></i>'+TL('非本系空間／公共設施')+'</span><span class="chip static"><i class="hdsw"></i>'+TL('您在這裡（導覽螢幕）')+'</span><span class="gap"></span><span class="chip static">'+radIcon(22)+TL('輻射相關空間')+'</span>';
+  h+='<span class="chip static"><i class="ndsw"></i>'+TL('非本系空間／公共設施')+'</span><span class="gap"></span><span class="chip static">'+radIcon(22)+TL('輻射相關空間')+'</span>';
   $('#legend').innerHTML=h;
 }
 
